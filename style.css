@@ -1,22 +1,47 @@
 
 :root {
-    --background-color: #f0f0f0;
-    --machine-background: #ffffff;
-    --ball-color: #f8f8f8;
+    --background-color-light: #f0f0f0;
+    --machine-background-light: #ffffff;
+    --ball-color-light: #f8f8f8;
+    --text-color-light: #333;
+    --shadow-color-light: rgba(0, 0, 0, 0.1);
+
+    --background-color-dark: #2c2c2c;
+    --machine-background-dark: #424242;
+    --ball-color-dark: #5a5a5a;
+    --text-color-dark: #f5f5f5;
+    --shadow-color-dark: rgba(0, 0, 0, 0.4);
+
     --button-background: #4a90e2;
     --button-hover-background: #357abd;
-    --text-color: #333;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+:root {
+    --background-color: var(--background-color-light);
+    --machine-background: var(--machine-background-light);
+    --ball-color: var(--ball-color-light);
+    --text-color: var(--text-color-light);
+    --shadow-color: var(--shadow-color-light);
+}
+
+:root[data-theme='dark'] {
+    --background-color: var(--background-color-dark);
+    --machine-background: var(--machine-background-dark);
+    --ball-color: var(--ball-color-dark);
+    --text-color: var(--text-color-dark);
+    --shadow-color: var(--shadow-color-dark);
 }
 
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--background-color);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 lotto-machine {
@@ -26,41 +51,7 @@ lotto-machine {
     padding: 2rem;
     box-shadow: 0 10px 20px var(--shadow-color);
     text-align: center;
-}
-
-.lotto-machine h1 {
-    color: var(--text-color);
-    margin-bottom: 2rem;
-}
-
-.ball-container {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-lotto-ball {
-    display: inline-block;
-}
-
-.lotto-ball {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--ball-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--text-color);
-    box-shadow: 0 4px 8px var(--shadow-color);
-    transition: transform 0.2s;
-}
-
-.lotto-ball:hover {
-    transform: scale(1.1);
+    transition: background-color 0.3s ease;
 }
 
 button {
