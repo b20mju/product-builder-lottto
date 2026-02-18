@@ -1,70 +1,84 @@
 
 :root {
-    --background-color-light: #f0f0f0;
-    --machine-background-light: #ffffff;
-    --ball-color-light: #f8f8f8;
-    --text-color-light: #333;
-    --shadow-color-light: rgba(0, 0, 0, 0.1);
+    --bg-light: #f4f7f6;
+    --machine-bg-light: #ffffff;
+    --text-light: #2c3e50;
+    --shadow-light: rgba(0, 0, 0, 0.1);
 
-    --background-color-dark: #2c2c2c;
-    --machine-background-dark: #424242;
-    --ball-color-dark: #5a5a5a;
-    --text-color-dark: #f5f5f5;
-    --shadow-color-dark: rgba(0, 0, 0, 0.4);
-
-    --button-background: #4a90e2;
-    --button-hover-background: #357abd;
+    --bg-dark: #1a1a2e;
+    --machine-bg-dark: #16213e;
+    --text-dark: #e94560;
+    --shadow-dark: rgba(0, 0, 0, 0.5);
+    
+    --transition-speed: 0.3s;
 }
 
-:root {
-    --background-color: var(--background-color-light);
-    --machine-background: var(--machine-background-light);
-    --ball-color: var(--ball-color-light);
-    --text-color: var(--text-color-light);
-    --shadow-color: var(--shadow-color-light);
+[data-theme='light'] {
+    --bg-color: var(--bg-light);
+    --machine-bg: var(--machine-bg-light);
+    --text-color: var(--text-light);
+    --shadow-color: var(--shadow-light);
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-:root[data-theme='dark'] {
-    --background-color: var(--background-color-dark);
-    --machine-background: var(--machine-background-dark);
-    --ball-color: var(--ball-color-dark);
-    --text-color: var(--text-color-dark);
-    --shadow-color: var(--shadow-color-dark);
+[data-theme='dark'] {
+    --bg-color: var(--bg-dark);
+    --machine-bg: var(--machine-bg-dark);
+    --text-color: #f1f1f1;
+    --shadow-color: var(--shadow-dark);
+    --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--background-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
     color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background 0.5s ease, color 0.3s ease;
 }
 
 lotto-machine {
     display: block;
-    background-color: var(--machine-background);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 10px 20px var(--shadow-color);
-    text-align: center;
-    transition: background-color 0.3s ease;
+    background-color: var(--machine-bg);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px var(--shadow-color);
+    transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    max-width: 95%;
+    width: 550px;
+    /* pass CSS variables down if needed, or handle in shadow DOM */
+    --text-color: var(--text-color);
 }
 
-button {
-    background-color: var(--button-background);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    border-radius: 8px;
+#theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 30px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-button:hover {
-    background-color: var(--button-hover-background);
+#theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+[data-theme='dark'] #theme-toggle {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] #theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.5);
 }

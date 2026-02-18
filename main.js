@@ -2,38 +2,54 @@
 class LottoBall extends HTMLElement {
     constructor() {
         super();
-        const shadow = this.attachShadow({ mode: 'open' });
+        this.shadow = this.attachShadow({ mode: 'open' });
+    }
+
+    connectedCallback() {
+        const number = parseInt(this.getAttribute('number'), 10);
+        const color = this.getColor(number);
 
         const style = document.createElement('style');
         style.textContent = `
+            @keyframes popIn {
+                0% { transform: scale(0); opacity: 0; }
+                80% { transform: scale(1.1); opacity: 1; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+
             .lotto-ball {
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
-                background-color: var(--ball-color);
+                background: radial-gradient(circle at 30% 30%, #fff, ${color});
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: var(--text-color);
-                box-shadow: 0 4px 8px var(--shadow-color);
-                transition: transform 0.2s, background-color 0.3s ease, color 0.3s ease;
-            }
-
-            .lotto-ball:hover {
-                transform: scale(1.1);
+                color: #333; /* Dark text for better contrast on bright balls */
+                text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
         `;
 
         const wrapper = document.createElement('div');
         wrapper.setAttribute('class', 'lotto-ball');
-        const number = document.createElement('span');
-        number.textContent = this.getAttribute('number');
-        wrapper.appendChild(number);
+        const numberSpan = document.createElement('span');
+        numberSpan.textContent = number;
+        wrapper.appendChild(numberSpan);
 
-        shadow.appendChild(style);
-        shadow.appendChild(wrapper);
+        this.shadow.appendChild(style);
+        this.shadow.appendChild(wrapper);
+    }
+
+    getColor(n) {
+        if (n <= 10) return '#fbc400'; // Yellow
+        if (n <= 20) return '#69c8f2'; // Blue
+        if (n <= 30) return '#ff7272'; // Red
+        if (n <= 40) return '#aaaaaa'; // Grey
+        return '#b0d840'; // Green
     }
 }
 
@@ -44,37 +60,51 @@ class LottoMachine extends HTMLElement {
 
         const style = document.createElement('style');
         style.textContent = `
+            :host {
+                display: block;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
             .lotto-machine {
                 text-align: center;
+                padding: 2rem;
             }
 
             h1 {
-                color: var(--text-color);
                 margin-bottom: 2rem;
-                transition: color 0.3s ease;
+                font-size: 2rem;
+                color: var(--text-color, #333);
             }
 
             .ball-container {
                 display: flex;
                 justify-content: center;
-                gap: 1rem;
-                margin-bottom: 2rem;
-                min-height: 60px;
+                gap: 0.8rem;
+                margin-bottom: 2.5rem;
+                min-height: 70px;
+                flex-wrap: nowrap;
             }
 
             button {
-                background-color: var(--button-background);
+                background: linear-gradient(135deg, #6e8efb, #a777e3);
                 color: white;
                 border: none;
-                padding: 1rem 2rem;
-                font-size: 1rem;
-                border-radius: 8px;
+                padding: 1rem 3rem;
+                font-size: 1.1rem;
+                font-weight: bold;
+                border-radius: 50px;
                 cursor: pointer;
-                transition: background-color 0.2s;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                transition: transform 0.2s, box-shadow 0.2s;
             }
 
             button:hover {
-                background-color: var(--button-hover-background);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            }
+            
+            button:active {
+                transform: translateY(1px);
             }
         `;
 
@@ -82,13 +112,13 @@ class LottoMachine extends HTMLElement {
         container.setAttribute('class', 'lotto-machine');
 
         const title = document.createElement('h1');
-        title.textContent = 'Lotto Number Generator';
+        title.textContent = 'Lucky Lotto 6/45';
 
         const ballContainer = document.createElement('div');
         ballContainer.setAttribute('class', 'ball-container');
 
         const button = document.createElement('button');
-        button.textContent = 'Generate Numbers';
+        button.textContent = 'Draw Numbers';
         button.addEventListener('click', () => {
             this.generateNumbers(ballContainer);
         });
@@ -101,7 +131,7 @@ class LottoMachine extends HTMLElement {
         shadow.appendChild(container);
     }
 
-    generateNumbers(ballContainer) {
+    async generateNumbers(ballContainer) {
         ballContainer.innerHTML = '';
         const numbers = new Set();
         while (numbers.size < 6) {
@@ -110,9 +140,10 @@ class LottoMachine extends HTMLElement {
 
         const sortedNumbers = Array.from(numbers).sort((a, b) => a - b);
 
-        for (const number of sortedNumbers) {
+        for (let i = 0; i < sortedNumbers.length; i++) {
+            await new Promise(resolve => setTimeout(resolve, 200)); // Delay for effect
             const lottoBall = document.createElement('lotto-ball');
-            lottoBall.setAttribute('number', number);
+            lottoBall.setAttribute('number', sortedNumbers[i]);
             ballContainer.appendChild(lottoBall);
         }
     }
@@ -121,7 +152,6 @@ class LottoMachine extends HTMLElement {
 customElements.define('lotto-ball', LottoBall);
 customElements.define('lotto-machine', LottoMachine);
 
-
 // Theme switching logic
 const themeToggle = document.getElementById('theme-toggle');
 const docElement = document.documentElement;
@@ -129,10 +159,16 @@ const docElement = document.documentElement;
 // Apply saved theme on load
 const savedTheme = localStorage.getItem('theme') || 'light';
 docElement.setAttribute('data-theme', savedTheme);
+updateThemeButton(savedTheme);
 
 themeToggle.addEventListener('click', () => {
     const currentTheme = docElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     docElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+    updateThemeButton(newTheme);
 });
+
+function updateThemeButton(theme) {
+    themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+}
