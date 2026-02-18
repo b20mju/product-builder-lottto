@@ -4,12 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
+    <title>Lucky Lotto 6/45</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <button id="theme-toggle">Toggle Theme</button>
-    <lotto-machine></lotto-machine>
+    <div class="app-container">
+        <lotto-machine id="machine"></lotto-machine>
+        
+        <div class="history-section">
+            <div class="history-header">
+                <h2>Draw History</h2>
+                <button id="clear-history">Clear</button>
+            </div>
+            <div id="history-list"></div>
+        </div>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
