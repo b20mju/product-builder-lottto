@@ -28,7 +28,7 @@ class LottoBall extends HTMLElement {
         if (!span) return;
 
         let rolls = 0;
-        const maxRolls = 10;
+        const maxRolls = 15;
         const interval = setInterval(() => {
             span.textContent = Math.floor(Math.random() * 45) + 1;
             rolls++;
@@ -38,19 +38,18 @@ class LottoBall extends HTMLElement {
                 this._number = finalNumber;
                 this.updateColor(finalNumber);
             }
-        }, 50);
+        }, 40);
     }
 
     updateColor(n) {
         const ball = this.shadow.querySelector('.lotto-ball');
         if (ball) {
             ball.style.background = `radial-gradient(circle at 30% 30%, #fff, ${this.getColor(n)})`;
+            ball.style.opacity = '1';
         }
     }
 
     render() {
-        const color = '#ddd'; // Default rolling color
-
         const style = document.createElement('style');
         style.textContent = `
             @keyframes popIn {
@@ -60,20 +59,21 @@ class LottoBall extends HTMLElement {
             }
 
             .lotto-ball {
-                width: 50px;
-                height: 50px;
+                width: 55px;
+                height: 55px;
                 border-radius: 50%;
-                background: radial-gradient(circle at 30% 30%, #fff, ${color});
+                background: #eee;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 1.2rem;
-                font-weight: bold;
+                font-size: 1.3rem;
+                font-weight: 700;
                 color: #333;
                 text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.2);
                 animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                transition: background 0.3s ease;
+                transition: background 0.4s ease;
+                opacity: 0.8;
             }
         `;
 
@@ -104,49 +104,58 @@ class LottoMachine extends HTMLElement {
 
         const style = document.createElement('style');
         style.textContent = `
-            :host { display: block; }
-            .lotto-machine { text-align: center; }
-            h1 { margin-bottom: 1.5rem; font-size: 1.8rem; color: var(--text-color, #333); }
+            :host { display: block; height: 100%; }
+            .lotto-machine {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 24px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
             .ball-container {
                 display: flex;
                 justify-content: center;
-                gap: 0.5rem;
-                margin-bottom: 2rem;
-                min-height: 60px;
+                gap: 0.75rem;
+                margin-bottom: 3rem;
+                min-height: 80px;
                 flex-wrap: nowrap;
             }
             button {
                 background: linear-gradient(135deg, #6e8efb, #a777e3);
                 color: white;
                 border: none;
-                padding: 0.8rem 2.5rem;
-                font-size: 1rem;
-                font-weight: bold;
+                padding: 1.2rem 4rem;
+                font-size: 1.2rem;
+                font-weight: 700;
                 border-radius: 50px;
                 cursor: pointer;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                transition: transform 0.2s, box-shadow 0.2s;
+                box-shadow: 0 10px 20px rgba(110, 142, 251, 0.3);
+                transition: all 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
-            button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-            button:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+            button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(110, 142, 251, 0.4); }
+            button:active { transform: translateY(1px); }
+            button:disabled { background: #999; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.5; }
         `;
 
         const container = document.createElement('div');
         container.setAttribute('class', 'lotto-machine');
 
-        const title = document.createElement('h1');
-        title.textContent = 'Lucky Lotto 6/45';
-
         const ballContainer = document.createElement('div');
         ballContainer.setAttribute('class', 'ball-container');
 
         const button = document.createElement('button');
-        button.textContent = 'Draw Numbers';
+        button.textContent = 'Draw My Fortune';
         button.addEventListener('click', () => {
             this.generateNumbers(ballContainer, button);
         });
 
-        container.appendChild(title);
         container.appendChild(ballContainer);
         container.appendChild(button);
         
@@ -171,7 +180,6 @@ class LottoMachine extends HTMLElement {
             ballContainer.appendChild(lottoBall);
         }
 
-        // Wait for last ball to finish rolling
         setTimeout(() => {
             button.disabled = false;
             this.dispatchEvent(new CustomEvent('draw-complete', {
@@ -179,7 +187,7 @@ class LottoMachine extends HTMLElement {
                 bubbles: true,
                 composed: true
             }));
-        }, 600);
+        }, 1000);
     }
 }
 
@@ -191,18 +199,21 @@ const historyList = document.getElementById('history-list');
 const clearHistoryBtn = document.getElementById('clear-history');
 const machine = document.getElementById('machine');
 
-// Load history from localStorage
 let drawHistory = JSON.parse(localStorage.getItem('lotto-history')) || [];
 
 function renderHistory() {
     historyList.innerHTML = '';
-    drawHistory.slice().reverse().forEach((draw, index) => {
+    if (drawHistory.length === 0) {
+        historyList.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top: 2rem;">No draws yet.</p>';
+        return;
+    }
+    drawHistory.slice().reverse().forEach((draw) => {
         const item = document.createElement('div');
         item.className = 'history-item';
         
         const date = document.createElement('span');
         date.className = 'history-date';
-        date.textContent = new Date(draw.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        date.textContent = new Date(draw.date).toLocaleString([], {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'});
         
         const nums = document.createElement('div');
         nums.className = 'history-numbers';
@@ -234,35 +245,36 @@ machine.addEventListener('draw-complete', (e) => {
         date: new Date().toISOString()
     };
     drawHistory.push(newDraw);
-    if (drawHistory.length > 10) drawHistory.shift(); // Keep last 10
+    if (drawHistory.length > 20) drawHistory.shift();
     localStorage.setItem('lotto-history', JSON.stringify(drawHistory));
     renderHistory();
 });
 
 clearHistoryBtn.addEventListener('click', () => {
-    drawHistory = [];
-    localStorage.removeItem('lotto-history');
-    renderHistory();
+    if (confirm('Clear all draw history?')) {
+        drawHistory = [];
+        localStorage.removeItem('lotto-history');
+        renderHistory();
+    }
 });
 
-// Initialize History
 renderHistory();
 
-// Theme switching logic
+// Theme Logic
 const themeToggle = document.getElementById('theme-toggle');
 const docElement = document.documentElement;
 const savedTheme = localStorage.getItem('theme') || 'light';
 docElement.setAttribute('data-theme', savedTheme);
-updateThemeButton(savedTheme);
+updateThemeIcon(savedTheme);
 
 themeToggle.addEventListener('click', () => {
     const currentTheme = docElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     docElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-    updateThemeButton(newTheme);
+    updateThemeIcon(newTheme);
 });
 
-function updateThemeButton(theme) {
-    themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+function updateThemeIcon(theme) {
+    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
 }

@@ -4,41 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Lotto 6/45</title>
+    <title>Premium Lucky Lotto 6/45</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="theme-toggle">Toggle Theme</button>
-    <div class="app-container">
-        <lotto-machine id="machine"></lotto-machine>
-        
-        <div class="history-section">
-            <div class="history-header">
-                <h2>Draw History</h2>
-                <button id="clear-history">Clear</button>
-            </div>
-            <div id="history-list"></div>
-        </div>
-
-        <div class="contact-section">
-            <h2>Partnership Inquiry</h2>
-            <form action="https://formspree.io/f/xdaldkvy" method="POST" class="contact-form">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="_replyto" placeholder="your@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="4" placeholder="How can we collaborate?" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Send Inquiry</button>
-            </form>
-        </div>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
+
+    <button id="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+
+    <main class="app-wrapper">
+        <header class="hero-section">
+            <h1 class="glitch-text">Lotto <span>6/45</span></h1>
+            <p class="subtitle">Experience your luck with our premium generator</p>
+        </header>
+
+        <div class="app-grid">
+            <section class="machine-panel">
+                <lotto-machine id="machine"></lotto-machine>
+            </section>
+            
+            <section class="side-panel">
+                <div class="panel-card history-card">
+                    <div class="panel-header">
+                        <h2><span class="icon">🕒</span> Recent Draws</h2>
+                        <button id="clear-history" class="text-btn">Clear All</button>
+                    </div>
+                    <div id="history-list" class="custom-scrollbar"></div>
+                </div>
+
+                <div class="panel-card contact-card">
+                    <div class="panel-header">
+                        <h2><span class="icon">✉️</span> Partnerships</h2>
+                    </div>
+                    <form action="https://formspree.io/f/xdaldkvy" method="POST" class="premium-form">
+                        <div class="input-group">
+                            <input type="text" name="name" required placeholder=" ">
+                            <label>Name</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" name="_replyto" required placeholder=" ">
+                            <label>Email</label>
+                        </div>
+                        <div class="input-group">
+                            <textarea name="message" required placeholder=" " rows="3"></textarea>
+                            <label>Message</label>
+                        </div>
+                        <button type="submit" class="glow-btn">Send Inquiry</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+    
     <script src="main.js"></script>
 </body>
 </html>
