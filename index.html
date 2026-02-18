@@ -19,6 +19,25 @@
             </div>
             <div id="history-list"></div>
         </div>
+
+        <div class="contact-section">
+            <h2>Partnership Inquiry</h2>
+            <form action="https://formspree.io/f/xdaldkvy" method="POST" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="_replyto" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="How can we collaborate?" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Inquiry</button>
+            </form>
+        </div>
     </div>
     <script src="main.js"></script>
 </body>
